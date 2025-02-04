@@ -1,4 +1,5 @@
 using GHWalk.Data;
+using GHWalk.Mappings;
 using GHWalk.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<GHWalksDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("SQLConnection")));
 
 builder.Services.AddScoped<IRegionRepository,SQLRegionRepository>();
+
+builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 
 var app = builder.Build();
 

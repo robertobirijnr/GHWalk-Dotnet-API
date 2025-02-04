@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using AutoMapper;
 using GHWalk.Data;
 using GHWalk.Models.Domain;
 using GHWalk.Models.DTO;
@@ -12,12 +13,12 @@ namespace GHWalk.Controllers
     [Route("api/[controller]")]
     public class RegionsController: ControllerBase
     {
-        private readonly GHWalksDbContext _dbContext;
         private readonly IRegionRepository _regionRepository;
-        public RegionsController(GHWalksDbContext dbContext, IRegionRepository regionRepository)
+        private readonly IMapper _Mapper;
+        public RegionsController(IRegionRepository regionRepository,IMapper mapper)
         {
+            _Mapper = mapper;
             _regionRepository = regionRepository;
-            _dbContext = dbContext;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -26,16 +27,9 @@ namespace GHWalk.Controllers
          //Get Data From Database - Domain model
          var regions = await _regionRepository.GetAllAsync();
 
-         //Map Domain models to DTOs
-        var regionsDTO = new List<RegionDto>();
-        foreach(var region in regions){
-            regionsDTO.Add(new RegionDto(){
-                Id = region.Id,
-                Code = region.Code,
-                Name = region.Name,
-                RegionImageUrl = region.RegionImageUrl
-            });
-        }
+
+        //Map Model to DTO
+        var regionsDTO = _Mapper.Map<List<RegionDto>>(regions);
 
             //Return DTO   
             return Ok(regionsDTO);
@@ -50,61 +44,34 @@ namespace GHWalk.Controllers
             }
 
             //Map DTOs
-            var regionDto = new RegionDto{
-                Id = region.Id,
-                Code = region.Code,
-                Name = region.Name,
-                RegionImageUrl = region.RegionImageUrl
-            };
+            var regionDto = _Mapper.Map<RegionDto>(region);
             return Ok(regionDto);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRegion([FromBody] AddRegionRequestDto request){
-            //Map DTO to Domain Model
-            var payload = new Region{
-                Code = request.Code,
-                Name = request.Name,
-                RegionImageUrl = request.RegionImageUrl
-            };
 
-            //use payload to create region
-        //    await _dbContext.Regions.AddAsync(payload);
-        //    await _dbContext.SaveChangesAsync();
+            var payload =  _Mapper.Map<Region>(request);
+
             await _regionRepository.Create(payload);
 
-            //DTO for Response
-            var ResponseDTO = new RegionDto{
-                Id = payload.Id,
-                Code = payload.Code,
-                Name = payload.Name,
-                RegionImageUrl = payload.RegionImageUrl
-            };
+             var ResponseDTO = _Mapper.Map<RegionDto>(payload);
 
             return CreatedAtAction(nameof(GetById),new {id = ResponseDTO.Id}, ResponseDTO);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRgion([FromRoute] Guid id, [FromBody] AddRegionRequestDto request){
-            var RequestDTO = new Region{
-                Code = request.Code,
-                Name = request.Name,
-                RegionImageUrl = request.RegionImageUrl
-            };
+           
+             var RequestDTO = _Mapper.Map<Region>(request);
 
             var region = await _regionRepository.Update(id,RequestDTO);
             if(region is null){
                 return NotFound();
             }
 
-           
-             var ResponseDTO = new RegionDto{
-                Id = region.Id,
-                Code = region.Code,
-                Name = region.Name,
-                RegionImageUrl = region.RegionImageUrl
-            };
-
+           var ResponseDTO = _Mapper.Map<RegionDto>(region);
+            
             return Ok(ResponseDTO);
         }
 
@@ -117,8 +84,8 @@ namespace GHWalk.Controllers
                 return NotFound();
             }
 
-
-            return Ok();
+          var response =  _Mapper.Map<RegionDto>(region);
+            return Ok(response);
         }
     }
 
