@@ -16,6 +16,7 @@ builder.Services.AddDbContext<GHWalksDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("SQLConnection")));
 
 builder.Services.AddScoped<IRegionRepository,SQLRegionRepository>();
+builder.Services.AddScoped<IWalkRepository,SQLWalkRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutomapperProfile));
 

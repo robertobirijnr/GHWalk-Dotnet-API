@@ -11,6 +11,10 @@ namespace GHWalk.Mappings
         {
             CreateMap<Region,RegionDto>().ReverseMap();
             CreateMap<AddRegionRequestDto,Region>().ReverseMap();
+
+            CreateMap<addWalkRequestDto,Walk>().ReverseMap();
+            CreateMap<Walk,WalkDto>().ReverseMap();
+            CreateMap<UpdateWalkDto,Walk>().ReverseMap();
         }
     }
 }
