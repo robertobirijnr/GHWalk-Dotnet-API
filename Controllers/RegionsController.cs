@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using GHWalk.Data;
 using GHWalk.Models.Domain;
 using GHWalk.Models.DTO;
+using GHWalk.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,8 +13,10 @@ namespace GHWalk.Controllers
     public class RegionsController: ControllerBase
     {
         private readonly GHWalksDbContext _dbContext;
-        public RegionsController(GHWalksDbContext dbContext)
+        private readonly IRegionRepository _regionRepository;
+        public RegionsController(GHWalksDbContext dbContext, IRegionRepository regionRepository)
         {
+            _regionRepository = regionRepository;
             _dbContext = dbContext;
         }
         [HttpGet]
@@ -21,7 +24,7 @@ namespace GHWalk.Controllers
         {
          
          //Get Data From Database - Domain model
-         var regions = await _dbContext.Regions.ToListAsync();
+         var regions = await _regionRepository.GetAllAsync();
 
          //Map Domain models to DTOs
         var regionsDTO = new List<RegionDto>();
@@ -40,7 +43,7 @@ namespace GHWalk.Controllers
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id){
-           var region = await _dbContext.Regions.FindAsync(id);
+           var region = await _regionRepository.GetById(id);
            //var region = _dbContext.Regions.FirstOrDefault(r=>r.Id == id);
             if(region is null){
                 return NotFound();
@@ -66,8 +69,9 @@ namespace GHWalk.Controllers
             };
 
             //use payload to create region
-           await _dbContext.Regions.AddAsync(payload);
-           await _dbContext.SaveChangesAsync();
+        //    await _dbContext.Regions.AddAsync(payload);
+        //    await _dbContext.SaveChangesAsync();
+            await _regionRepository.Create(payload);
 
             //DTO for Response
             var ResponseDTO = new RegionDto{
@@ -82,17 +86,18 @@ namespace GHWalk.Controllers
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateRgion([FromRoute] Guid id, [FromBody] AddRegionRequestDto request){
-            var region = await _dbContext.Regions.FindAsync(id);
+            var RequestDTO = new Region{
+                Code = request.Code,
+                Name = request.Name,
+                RegionImageUrl = request.RegionImageUrl
+            };
+
+            var region = await _regionRepository.Update(id,RequestDTO);
             if(region is null){
                 return NotFound();
             }
 
-            region.Code = request.Code;
-            region.Name = request.Name;
-            region.RegionImageUrl = request.RegionImageUrl;
-
-           await _dbContext.SaveChangesAsync();
-
+           
              var ResponseDTO = new RegionDto{
                 Id = region.Id,
                 Code = region.Code,
@@ -106,14 +111,13 @@ namespace GHWalk.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRegion([FromRoute] Guid id){
-            var region =await _dbContext.Regions.FindAsync(id);
+            var region = await _regionRepository.Delete(id);
 
             if(region is null){
                 return NotFound();
             }
 
-            _dbContext.Regions.Remove(region);
-           await _dbContext.SaveChangesAsync();
+
             return Ok();
         }
     }
