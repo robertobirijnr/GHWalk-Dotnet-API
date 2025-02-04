@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:latest
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Upss@2022?jnr
+      - MSSQL_PID=Express  # Use 'Developer' for the Developer edition
+    ports:
+      - '1433:1433'
