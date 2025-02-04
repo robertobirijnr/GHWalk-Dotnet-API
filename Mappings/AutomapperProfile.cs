@@ -15,6 +15,7 @@ namespace GHWalk.Mappings
             CreateMap<addWalkRequestDto,Walk>().ReverseMap();
             CreateMap<Walk,WalkDto>().ReverseMap();
             CreateMap<UpdateWalkDto,Walk>().ReverseMap();
+            CreateMap<Difficulty,DifficultyDto>().ReverseMap();
         }
     }
 }

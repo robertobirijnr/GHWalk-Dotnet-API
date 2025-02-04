@@ -39,6 +39,7 @@ namespace GHWalk.Controllers
            
           var walks =  await _walkRepository.GetAll();
 
+            //Map Domian Model to DTO
           var responseDTO = _mapper.Map<List<WalkDto>>(walks);
 
           return Ok(responseDTO);

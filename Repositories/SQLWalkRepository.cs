@@ -36,7 +36,7 @@ namespace GHWalk.Repositories
 
         public async Task<List<Walk>> GetAll()
         {
-            return await _gHWalksDbContext.Walks.ToListAsync();
+            return await _gHWalksDbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
            
         }
 
