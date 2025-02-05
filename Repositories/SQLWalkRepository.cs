@@ -42,7 +42,7 @@ namespace GHWalk.Repositories
 
         public async Task<Walk?> GetById(Guid id)
         {
-           return await _gHWalksDbContext.Walks.FirstOrDefaultAsync(w=>w.Id == id);
+           return await _gHWalksDbContext.Walks.Include("Difficulty").Include("Region").FirstOrDefaultAsync(w=>w.Id == id);
         }
 
         public async Task<Walk?> Update(Guid id, Walk walk)
