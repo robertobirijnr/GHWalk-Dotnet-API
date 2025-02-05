@@ -34,13 +34,21 @@ namespace GHWalk.Repositories
             return walk;
         }
 
-        public async Task<List<Walk>> GetAll(string? filterOn = null, string? filterQuery = null)
+        public async Task<List<Walk>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending=true)
         {
             var walks = _gHWalksDbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
-
+        
+            //Filtering
             if(string.IsNullOrWhiteSpace(filterOn)==false && string.IsNullOrWhiteSpace(filterQuery) == false){
                 if(filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase)){
                     walks = walks.Where(w=>w.Name.Contains(filterQuery));
+                }
+            }
+
+            //Sorting
+            if(string.IsNullOrWhiteSpace(sortBy) == false){
+                if(sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase)){
+                    walks = isAscending? walks.OrderBy(w=>w.Name) : walks.OrderByDescending(w=>w.Name);
                 }
             }
 

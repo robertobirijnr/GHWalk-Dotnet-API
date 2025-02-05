@@ -40,9 +40,9 @@ namespace GHWalk.Controllers
 
         [HttpGet]
 
-         public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery){
+         public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending){
            
-          var walks =  await _walkRepository.GetAll(filterOn,filterQuery);
+          var walks =  await _walkRepository.GetAll(filterOn,filterQuery,sortBy,isAscending ?? true);
 
             //Map Domian Model to DTO
           var responseDTO = _mapper.Map<List<WalkDto>>(walks);
