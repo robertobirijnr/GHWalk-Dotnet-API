@@ -39,15 +39,26 @@ namespace GHWalk.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllWalks(){
+
+         public async Task<IActionResult> GetAllWalks([FromQuery] string? filterOn, [FromQuery] string? filterQuery){
            
-          var walks =  await _walkRepository.GetAll();
+          var walks =  await _walkRepository.GetAll(filterOn,filterQuery);
 
             //Map Domian Model to DTO
           var responseDTO = _mapper.Map<List<WalkDto>>(walks);
 
           return Ok(responseDTO);
         }
+
+        // public async Task<IActionResult> GetAllWalks(){
+           
+        //   var walks =  await _walkRepository.GetAll();
+
+        //     //Map Domian Model to DTO
+        //   var responseDTO = _mapper.Map<List<WalkDto>>(walks);
+
+        //   return Ok(responseDTO);
+        // }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetWalk(Guid id){
