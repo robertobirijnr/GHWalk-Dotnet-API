@@ -25,12 +25,16 @@ namespace GHWalk.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] addWalkRequestDto request){
-          var payload =  _mapper.Map<Walk>(request);
+         if(ModelState.IsValid){
+           var payload =  _mapper.Map<Walk>(request);
           await _walkRepository.Create(payload);
 
           var responseDTO = _mapper.Map<WalkDto>(payload);
 
-        return Ok(responseDTO);
+           return Ok(responseDTO);
+         }else{
+          return BadRequest(ModelState);
+         }
 
         }
 
@@ -57,7 +61,8 @@ namespace GHWalk.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateWalk(Guid id, UpdateWalkDto updateWalkDto){
 
-            var requestDTO = _mapper.Map<Walk>(updateWalkDto);
+           if(ModelState.IsValid){
+             var requestDTO = _mapper.Map<Walk>(updateWalkDto);
            var walk = await _walkRepository.Update(id,requestDTO);
 
            if(walk is null){
@@ -67,6 +72,9 @@ namespace GHWalk.Controllers
            var updateDTO = _mapper.Map<UpdateWalkDto>(walk);
 
            return Ok(updateDTO);
+           }else{
+            return BadRequest(ModelState);
+           }
         }
 
         [HttpDelete("{id}")]

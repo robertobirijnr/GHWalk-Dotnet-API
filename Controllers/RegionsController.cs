@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using AutoMapper;
+using GHWalk.CustomActionFilters;
 using GHWalk.Data;
 using GHWalk.Models.Domain;
 using GHWalk.Models.DTO;
@@ -49,8 +50,10 @@ namespace GHWalk.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> CreateRegion([FromBody] AddRegionRequestDto request){
 
+           
             var payload =  _Mapper.Map<Region>(request);
 
             await _regionRepository.Create(payload);
@@ -58,12 +61,17 @@ namespace GHWalk.Controllers
              var ResponseDTO = _Mapper.Map<RegionDto>(payload);
 
             return CreatedAtAction(nameof(GetById),new {id = ResponseDTO.Id}, ResponseDTO);
+            
+
+           
         }
 
         [HttpPut("{id}")]
+        [ValidateModel]
         public async Task<IActionResult> UpdateRgion([FromRoute] Guid id, [FromBody] AddRegionRequestDto request){
            
-             var RequestDTO = _Mapper.Map<Region>(request);
+           
+            var RequestDTO = _Mapper.Map<Region>(request);
 
             var region = await _regionRepository.Update(id,RequestDTO);
             if(region is null){
@@ -73,6 +81,7 @@ namespace GHWalk.Controllers
            var ResponseDTO = _Mapper.Map<RegionDto>(region);
             
             return Ok(ResponseDTO);
+          
         }
 
 
