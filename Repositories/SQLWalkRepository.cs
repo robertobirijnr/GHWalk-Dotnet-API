@@ -34,7 +34,7 @@ namespace GHWalk.Repositories
             return walk;
         }
 
-        public async Task<List<Walk>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending=true)
+        public async Task<List<Walk>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending=true, int pageNumber = 1, int pageSize = 1000)
         {
             var walks = _gHWalksDbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
         
@@ -53,7 +53,11 @@ namespace GHWalk.Repositories
             }
 
 
-            return await walks.ToListAsync();
+            //Pagination
+            var Skipresults  = (pageNumber - 1) * pageSize;
+
+            return await walks.Skip(Skipresults).Take(pageSize).ToListAsync();
+            // return await walks.ToListAsync();
            // return await _gHWalksDbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
            
         }
