@@ -5,6 +5,7 @@ using GHWalk.Data;
 using GHWalk.Models.Domain;
 using GHWalk.Models.DTO;
 using GHWalk.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace GHWalk.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class RegionsController: ControllerBase
     {
         private readonly IRegionRepository _regionRepository;

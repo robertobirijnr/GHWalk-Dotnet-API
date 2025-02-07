@@ -8,7 +8,7 @@ namespace GHWalk.Data
     public class GHWalksDbContext:DbContext
     {
 
-        public GHWalksDbContext(DbContextOptions dbContextOptions):base(dbContextOptions)
+        public GHWalksDbContext(DbContextOptions<GHWalkAuthDbContext> dbContextOptions):base(dbContextOptions)
         {
         
         }
