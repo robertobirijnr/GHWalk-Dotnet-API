@@ -15,6 +15,7 @@ namespace GHWalk.Controllers
                 _userManager = userManager;
         }
         [HttpPost]
+        [Route("Register")]
         public async Task<IActionResult> Register([FromBody]RegisterRequestDto registerRequest){
             var identityuser = new IdentityUser{
                 UserName = registerRequest.Username,
@@ -31,6 +32,22 @@ namespace GHWalk.Controllers
                 }
              }
              return BadRequest("Something went wront");
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody]LoginRequestDto loginRequest){
+           var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+           if(user != null){
+              var checkPassword =  await _userManager.CheckPasswordAsync(user,loginRequest.Password);
+              if(checkPassword){
+                //create token 
+
+                return Ok();
+              }
+           }
+
+            return BadRequest("Username or password incorrect");
         }
         
     }
