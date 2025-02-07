@@ -1,6 +1,7 @@
 
 using System.Threading.Tasks;
 using GHWalk.Models.DTO;
+using GHWalk.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,9 @@ namespace GHWalk.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        public AuthController(UserManager<IdentityUser> userManager){
+        private readonly ITokenRepository _tokenRepository;
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository){
+                _tokenRepository = tokenRepository;
                 _userManager = userManager;
         }
         [HttpPost]
@@ -41,9 +44,15 @@ namespace GHWalk.Controllers
            if(user != null){
               var checkPassword =  await _userManager.CheckPasswordAsync(user,loginRequest.Password);
               if(checkPassword){
+                //Get Roles for user
+                var roles = await _userManager.GetRolesAsync(user);
                 //create token 
-
-                return Ok();
+                if(roles != null){
+                  var jwtToken =   _tokenRepository.CreateJWTToken(user,roles.ToList());
+                   return Ok(jwtToken);
+                }
+              
+               
               }
            }
 
